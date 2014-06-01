@@ -61,6 +61,16 @@ table {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
 		.graph {
 			padding: 20px;
 			border:1px solid #efefef;
@@ -159,11 +169,26 @@ table {
 		
 		.info {
 			margin:10px 20px 20px;
-			color: #444;
+			color: #747474;
 			font-family: 'Lato',sans-serif;
 			font-weight: 400;
 			font-size: 13px;
 			line-height: 1.5;
+		}
+		
+		small {
+			font-size: 10px;
+			font-family: 'Lato',sans-serif;
+			font-weight: 400;
+			color: #d6d6d6;
+			text-align: right;
+			display: block;
+			margin-bottom: 40px;
+		}
+		
+		small a {
+			color: #d6d6d6;
+			text-decoration: none;
 		}
 		
 	</style>
@@ -177,11 +202,15 @@ table {
 
 <p class="info">Below you will find a comparison of economic inequality. First it is compared on the y-axis just how far from the median income those in the 10th percentile (low income earners) and 90th percentile (high income earners) are and the income distance between each group. Each country is next plotted on the x-axis where they fall on the Gini coefficient, a statistical measurement of income disbursement. Further, the average of each region appears as the orange highlighted measures.</p>
 
+<div class="cf">
 <div id="we_svg" class="graph"><h1>Western Europe</h1></div>
 <div id="ee_svg" class="graph"><h1>Eastern Europe</h1></div>
 <div id="ne_svg" class="graph"><h1>Northern Europe</h1></div>
 <div id="se_svg" class="graph"><h1>Southern Europe</h1></div>
 <div id="na_svg" class="graph"><h1>North America</h1></div>
+</div>
+
+<small>Source: <a href="http://www.apsanet.org/imgtest/PSJan06BrandoliniSmeeding.pdf">http://www.apsanet.org/imgtest/PSJan06BrandoliniSmeeding.pdf</a></small>
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -654,7 +683,7 @@ var width = 400,
 			top:20,
 			right:20,
 			bottom:50,
-			left:65
+			left:80
 		},
 		yAxis_width = 50,
 		xAxis_height = 50,
@@ -672,7 +701,7 @@ var xScale = d3.scale.linear()
 var yScale = d3.scale.linear()
 		.domain([min_income,max_income])
 		.range([height - margin.bottom,margin.top]);
-		
+
 
 var build_graph = function(data,svg,avg){
 
@@ -697,6 +726,7 @@ var build_graph = function(data,svg,avg){
 	var yAxis = d3.svg.axis()
           .scale(yScale)
           .orient("left")
+          .tickFormat(function(d) { return d + "%"; });
     svg.append("g")
     	.call(yAxis)
     	.attr('transform','translate('+margin.left+',0)');
