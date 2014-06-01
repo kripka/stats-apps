@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Economic Inequality</title>
+	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href='http://fonts.googleapis.com/css?family=Lato:400,700,' rel='stylesheet' type='text/css'>
+	
+	<style>
+		html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+		.graph {
+			padding: 20px;
+			border:1px solid #efefef;
+			width: 440px;
+			float: left;
+			margin:20px;
+			position: relative;
+		}
+		line {
+			stroke: #d6d6d6;
+			stroke-width:1px;
+		}
+		
+		circle {
+			fill:#d6d6d6;
+		}
+		#median {
+			stroke-dasharray:4,4;
+			stroke: #d6d6d6;
+			stroke-width:2px;
+		}
+		
+		circle.Average {
+			fill:#ff5a0b;
+		}
+		
+		line.Average {
+			stroke:#ff5a0b;
+		}
+		
+		.domain {
+			fill:none;
+			stroke:#efefef;
+			stroke-width:1px;
+		}
+		
+		.median {
+			stroke: #efefef;
+			stroke-dasharray:4,4;
+			stroke-width:1px;
+		}
+		
+		text {
+			font-family: 'Lato',sans-serif;
+			font-weight: 400;
+			font-size: 10px;
+		}
+		
+		.graph h1 {
+			text-align: center;
+			font-family: 'Lato',sans-serif;
+			font-weight: 700;
+			font-size: 14px;
+			position: absolute;
+			top:40px;
+			width:100%;
+			left: 0;
+			color:#ff5a0b;
+		}
+		
+		.wrapper {
+			width:960px;
+			margin: 0 auto;
+		}
+		
+		#header1 {
+			font-size: 24px;
+			font-weight: 700;
+			font-family: 'Lato',sans-serif;
+			margin-left: 20px;
+			margin-top: 40px;
+			margin-bottom: 5px;
+			color:#ff5a0b;
+		}
+		
+		#header2 {
+			font-size: 18px;
+			font-weight: 400;
+			font-family: 'Lato',sans-serif;
+			margin-left: 20px;
+			margin-top: 0;
+			color: #222;
+		}
+		
+		.label {
+			display: none;
+			fill:#444;
+			text-anchor: middle;
+		}
+		
+		.label.Average {
+			fill:#ff5a0b;
+			opacity: 1;
+			display: block;
+		}
+		
+		.info {
+			margin:10px 20px 20px;
+			color: #444;
+			font-family: 'Lato',sans-serif;
+			font-weight: 400;
+			font-size: 13px;
+			line-height: 1.5;
+		}
+		
+	</style>
+	
+	<script src="js/modernizr.js"></script>
+</head>
+<body>
+<div class="wrapper">
+<h1 id="header1">Regional Economic and Social Inequality</h1>
+<h2 id="header2">Between 10th Percentile (Low Income) and 90th Percentile (High Income) Earners</h2>
+
+<p class="info">Below you will find a comparison of economic inequality as measured by how far from the median income those in the 10th percentile (low income earners) and 90th percentile (high income earners). Each country is plotted where they fall on the Gini coefficient, a statistical measurement of income disbursement. Further, the average of each region appears as the highlighted measures.</p>
+
+<div id="we_svg" class="graph"><h1>Western Europe</h1></div>
+<div id="ee_svg" class="graph"><h1>Eastern Europe</h1></div>
+<div id="ne_svg" class="graph"><h1>Northern Europe</h1></div>
+<div id="se_svg" class="graph"><h1>Southern Europe</h1></div>
+<div id="na_svg" class="graph"><h1>North America</h1></div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="http://localhost/wp/citsci-blog/wp-content/themes/CitSciMonthlyv1/js/libs/jquery-1.10.2.min.js"><\/script>')</script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script>
+$(function(){
+	
+	var data = [
+  {
+    "Country":"Mexico",
+    "Year":2002,
+    "P10":33,
+    "Difference":276,
+    "P90":309,
+    "Ratio":9.36,
+    "Gini":0.47,
+    "Population":100909370,
+    "10 of Pop":10090937,
+    "40 of Pop":40363748,
+    "Region": "North America"
+  },
+  {
+    "Country":"Russia",
+    "Year":2000,
+    "P10":33,
+    "Difference":243,
+    "P90":276,
+    "Ratio":8.37,
+    "Gini":0.43,
+    "Population":146597000,
+    "10 of Pop":14659700,
+    "40 of Pop":58638800,
+    "Region":"Eastern Europe"
+  },
+  {
+    "Country":"Estonia",
+    "Year":2000,
+    "P10":46,
+    "Difference":188,
+    "P90":234,
+    "Ratio":5.08,
+    "Gini":0.36,
+    "Population":1369515,
+    "10 of Pop":136952,
+    "40 of Pop":547806,
+    "Region":"Northern Europe"
+  },
+  {
+    "Country":"United States",
+    "Year":2000,
+    "P10":39,
+    "Difference":171,
+    "P90":210,
+    "Ratio":5.45,
+    "Gini":0.37,
+    "Population":281421906,
+    "10 of Pop":28142191,
+    "40 of Pop":112568762.4,
+    "Region":"North America"
+  },
+  {
+    "Country":"United Kingdom",
+    "Year":1999,
+    "P10":47,
+    "Difference":168,
+    "P90":215,
+    "Ratio":4.59,
+    "Gini":0.35,
+    "Population":58684427,
+    "10 of Pop":5868443,
+    "40 of Pop":23473770.8,
+    "Region":"Northern Europe"
+  },
+  {
+    "Country":"Spain",
+    "Year":2000,
+    "P10":44,
+    "Difference":165,
+    "P90":209,
+    "Ratio":4.78,
+    "Gini":0.34,
+    "Population":40264162,
+    "10 of Pop":4026416,
+    "40 of Pop":16105664.8,
+    "Region":"Southern Europe"
+  },
+  {
+    "Country":"Greece",
+    "Year":2000,
+    "P10":43,
+    "Difference":164,
+    "P90":207,
+    "Ratio":4.77,
+    "Gini":0.34,
+    "Population":10917457,
+    "10 of Pop":1091746,
+    "40 of Pop":4366982.8,
+    "Region":"Southern Europe"
+  },
+  {
+    "Country":"Italy",
+    "Year":2000,
+    "P10":44,
+    "Difference":155,
+    "P90":199,
+    "Ratio":4.48,
+    "Gini":0.33,
+    "Population":56942108,
+    "10 of Pop":5694211,
+    "40 of Pop":22776843.2,
+    "Region":"Italy"
+  },
+  {
+    "Country":"Ireland",
+    "Year":2000,
+    "P10":41,
+    "Difference":148,
+    "P90":189,
+    "Ratio":4.56,
+    "Gini":0.32,
+    "Population":3847200,
+    "10 of Pop":384720,
+    "40 of Pop":1538880,
+    "Region":"Northern Europe"
+  },
+  {
+    "Country":"Canada",
+    "Year":2000,
+    "P10":48,
+    "Difference":140,
+    "P90":188,
+    "Ratio":3.95,
+    "Gini":0.30,
+    "Population":30685730,
+    "10 of Pop":3068573,
+    "40 of Pop":12274292,
+    "Region":"North America"
+  },
+  {
+    "Country":"Hungary",
+    "Year":1999,
+    "P10":54,
+    "Difference":140,
+    "P90":194,
+    "Ratio":3.57,
+    "Gini":0.30,
+    "Population":10067507,
+    "10 of Pop":1006751,
+    "40 of Pop":4027002.8,
+    "Region":"Eastern Europe"
+  },
+  {
+    "Country":"France",
+    "Year":1994,
+    "P10":54,
+    "Difference":137,
+    "P90":191,
+    "Ratio":3.54,
+    "Gini":0.29,
+    "Population":57658772,
+    "10 of Pop":5765877,
+    "40 of Pop":23063508.8,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Poland",
+    "Year":1999,
+    "P10":52,
+    "Difference":136,
+    "P90":188,
+    "Ratio":3.59,
+    "Gini":0.29,
+    "Population":38270000,
+    "10 of Pop":3827000,
+    "40 of Pop":15308000,
+    "Region":"Eastern Europe"
+  },
+  {
+    "Country":"Switzerland",
+    "Year":2002,
+    "P10":54,
+    "Difference":128,
+    "P90":182,
+    "Ratio":3.38,
+    "Gini":0.27,
+    "Population":7284754,
+    "10 of Pop":728475,
+    "40 of Pop":2913901.6,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Romania",
+    "Year":1997,
+    "P10":53,
+    "Difference":127,
+    "P90":180,
+    "Ratio":3.38,
+    "Gini":0.28,
+    "Population":22545925,
+    "10 of Pop":2254593,
+    "40 of Pop":9018370,
+    "Region":"Eastern Europe"
+  },
+  {
+    "Country":"Luxembourg",
+    "Year":2000,
+    "P10":57,
+    "Difference":127,
+    "P90":184,
+    "Ratio":3.24,
+    "Gini":0.26,
+    "Population":436300,
+    "10 of Pop":43630,
+    "40 of Pop":174520,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Germany",
+    "Year":2000,
+    "P10":54,
+    "Difference":123,
+    "P90":177,
+    "Ratio":3.29,
+    "Gini":0.26,
+    "Population":82187614,
+    "10 of Pop":8218761,
+    "40 of Pop":32875045.6,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Belgium",
+    "Year":2000,
+    "P10":53,
+    "Difference":121,
+    "P90":174,
+    "Ratio":3.31,
+    "Gini":0.28,
+    "Population":10251250,
+    "10 of Pop":1025125,
+    "40 of Pop":4100500,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Czech Republic",
+    "Year":1996,
+    "P10":60,
+    "Difference":119,
+    "P90":179,
+    "Ratio":3.01,
+    "Gini":0.26,
+    "Population":10315353,
+    "10 of Pop":1031535,
+    "40 of Pop":4126141.2,
+    "Region":"Eastern Europe"
+  },
+  {
+    "Country":"Austria",
+    "Year":2000,
+    "P10":55,
+    "Difference":118,
+    "P90":173,
+    "Ratio":3.17,
+    "Gini":0.26,
+    "Population":8011566,
+    "10 of Pop":801157,
+    "40 of Pop":3204626.4,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Slovenia",
+    "Year":1999,
+    "P10":53,
+    "Difference":114,
+    "P90":167,
+    "Ratio":3.15,
+    "Gini":0.25,
+    "Population":1985557,
+    "10 of Pop":198556,
+    "40 of Pop":794222.8,
+    "Region":"Southern Europe"
+  },
+  {
+    "Country":"Sweden",
+    "Year":2000,
+    "P10":57,
+    "Difference":111,
+    "P90":168,
+    "Ratio":2.96,
+    "Gini":0.25,
+    "Population":8872110,
+    "10 of Pop":887211,
+    "40 of Pop":3548844,
+    "Region":"Northern Europe"
+  },
+  {
+    "Country":"Netherlands",
+    "Year":1999,
+    "P10":56,
+    "Difference":111,
+    "P90":167,
+    "Ratio":2.98,
+    "Gini":0.25,
+    "Population":15812088,
+    "10 of Pop":1581209,
+    "40 of Pop":6324835.2,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Finland",
+    "Year":2000,
+    "P10":57,
+    "Difference":107,
+    "P90":164,
+    "Ratio":2.90,
+    "Gini":0.25,
+    "Population":5181115,
+    "10 of Pop":518112,
+    "40 of Pop":2072446,
+    "Region":"Northern Europe"
+  },
+  {
+    "Country":"Slovak Republic",
+    "Year":1996,
+    "P10":56,
+    "Difference":106,
+    "P90":162,
+    "Ratio":2.88,
+    "Gini":0.24,
+    "Population":5373793,
+    "10 of Pop":537379,
+    "40 of Pop":2149517.2,
+    "Region":"Eastern Europe"
+  },
+  {
+    "Country":"Norway",
+    "Year":2000,
+    "P10":57,
+    "Difference":102,
+    "P90":159,
+    "Ratio":2.80,
+    "Gini":0.25,
+    "Population":4490967,
+    "10 of Pop":449097,
+    "40 of Pop":1796386.8,
+    "Region":"Northern Europe"
+  },
+  {
+    "Country":"Denmark",
+    "Year":1992,
+    "P10":54,
+    "Difference":101,
+    "P90":155,
+    "Ratio":2.85,
+    "Gini":0.24,
+    "Population":5170270,
+    "10 of Pop":517027,
+    "40 of Pop":2068108,
+    "Region":"Northern Europe"
+  },
+    {
+    "Country":"Average",
+    "P10":51.29,
+    "P90":183.43,
+    "Gini":0.29,
+    "Region":"Northern Europe"
+  },
+  {
+    "Country":"Average",
+    "P10":46.1,
+    "P90":195.5,
+    "Gini":0.315,
+    "Region":"Southern Europe"
+  },
+  {
+    "Country":"Average",
+    "P10":51.33,
+    "P90":196.5,
+    "Gini":0.3,
+    "Region":"Eastern Europe"
+  },
+  {
+    "Country":"Average",
+    "P10":54.78,
+    "P90":178.29,
+    "Gini":0.267,
+    "Region":"Western Europe"
+  },
+  {
+    "Country":"Average",
+    "P10":40,
+    "P90":235.66,
+    "Gini":0.38,
+    "Region":"North America"
+  }
+];
+
+var ne_avg = {
+    "Country":"Average",
+    "P10":51.29,
+    "P90":183.43,
+    "Gini":0.29,
+    "Region":"Northern Europe"
+  };
+
+var se_avg ={
+    "Country":"Average",
+    "P10":46.1,
+    "P90":195.5,
+    "Gini":0.315,
+    "Region":"Southern Europe"
+  }; 
+
+var we_avg = {
+    "Country":"Average",
+    "P10":54.78,
+    "P90":178.29,
+    "Gini":0.267,
+    "Region":"Western Europe"
+  };
+
+var ee_avg = {
+    "Country":"Average",
+    "P10":51.33,
+    "P90":196.5,
+    "Gini":0.3,
+    "Region":"Eastern Europe"
+  };
+
+var na_avg = {
+    "Country":"Average",
+    "P10":40,
+    "P90":235.66,
+    "Gini":0.38,
+    "Region":"North America"
+  };
+
+var na_data = [],
+	ee_data = [],
+	we_data = [],
+	se_data = [],
+	ne_data = [];
+	
+for (d in data){	
+	switch(data[d].Region){
+		case 'North America':
+			na_data.push(data[d]);
+			break;
+		case 'Eastern Europe':
+			ee_data.push(data[d]);
+			break;
+		case 'Western Europe':
+			we_data.push(data[d]);
+			break;
+		case 'Southern Europe':
+			se_data.push(data[d]);
+			break;
+		case 'Northern Europe':
+			ne_data.push(data[d]);
+			break;
+	}
+	
+}
+
+
+/// visual variables
+var width = 400,
+		height = 400,
+		margin = {
+			top:20,
+			right:20,
+			bottom:50,
+			left:65
+		},
+		yAxis_width = 50,
+		xAxis_height = 50,
+		circle_radius = 4;
+
+var min_gini = .2,
+	max_gini = d3.max(data,function(d){return d.Gini;}),
+	min_income = 0,
+	max_income = d3.max(data,function(d){return d.P90;});
+	
+var xScale = d3.scale.linear()
+		.domain([min_gini,max_gini])
+		.range([margin.left,width -margin.right]);
+	
+var yScale = d3.scale.linear()
+		.domain([min_income,max_income])
+		.range([height - margin.bottom,margin.top]);
+		
+
+var build_graph = function(data,svg,avg){
+
+	var median = svg.append('line')
+		.attr('x1',margin.left)
+		.attr('y1',yScale(100))
+		.attr('x2',width-margin.right)
+		.attr('y2',yScale(100))
+		.attr('class','median');
+	
+	// xaxis
+	var xAxis = d3.svg.axis()
+          .scale(xScale)
+          .orient("bottom")
+          .ticks(5)
+          .tickPadding(5);
+    svg.append("g")
+    	.call(xAxis)
+    	.attr('transform','translate(0,'+(height - margin.bottom)+')');;
+    	
+    //yaxis
+	var yAxis = d3.svg.axis()
+          .scale(yScale)
+          .orient("left")
+    svg.append("g")
+    	.call(yAxis)
+    	.attr('transform','translate('+margin.left+',0)');
+    	
+    var labels = svg.selectAll('.label').data(data).enter()
+		.append('text')
+		.text(function(d){return d.Country;})
+		.attr('x',function(d){
+			return xScale(d.Gini);
+		})
+		.attr('y',function(d){
+			return yScale(d.P90) -10;
+		})
+		.attr('class',function(d){
+			return 'label ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		});
+    	
+    var lines = svg.selectAll('line.line').data(data).enter()
+		.append('line')
+		.attr('x1',function(d){
+			return xScale(d.Gini);
+		})
+		.attr('y1',function(d){
+			return yScale(d.P10);
+		})
+		.attr('x2',function(d){
+			return xScale(d.Gini);
+		})
+		.attr('y2',function(d){
+			return yScale(d.P90);
+		})
+		.attr('class',function(d){
+			return 'line ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		});
+	
+
+	var p10_circles = svg.selectAll('circle.p10').data(data).enter()
+		.append('circle')
+		.attr('cx',function(d){
+			return xScale(d.Gini)
+		})
+		.attr('cy',function(d){
+			return yScale(d.P10);
+		})
+		.attr('r',circle_radius)
+		.attr('class',function(d){
+			return 'p10 ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		});
+		
+	var p90_circles = svg.selectAll('circle.p90').data(data).enter()
+		.append('circle')
+		.attr('cx',function(d){
+			return xScale(d.Gini)
+		})
+		.attr('cy',function(d){
+			return yScale(d.P90);
+		})
+		.attr('r',circle_radius)
+		.attr('class',function(d){
+			return 'p90 ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		});
+		
+	
+		
+	var xAxis_label = svg.append('text')
+		.text('Gini Coefficient')
+		.attr('x',width/2-20)
+		.attr('y',height);
+		
+	var yAxis_label = svg.append('text')
+		.text('Income as Percent of Median')
+		.attr('x',-height/2 - 60)
+		.attr('y',20)
+		.attr('transform','rotate(-90)');
+		
+	/*
+var avg_label = svg.append('text')
+		.text('Average')
+		.attr('x',xScale(avg.Gini) - 17)
+		.attr('y',yScale(avg.P90) - 20)
+		.attr('class','text-avg');
+*/
+		
+		
+	svg.selectAll('.p10:not(.Average),.p90:not(.Average),.line:not(.Average)').on('mouseenter',function(){
+		var that = this
+			country = that.__data__.Country;
+					
+		
+		svg.selectAll('.p10,.p90,.line').transition().duration(50).style('opacity',function () {
+        	return (this.__data__.Country == country) ? 1.0 : 0;
+		});
+		
+		svg.selectAll('.label').style('display',function(){
+			return (this.__data__.Country == country) ? 'block' : 'none';
+		});
+		
+		//svg.select('.text-avg').transition().duration(50).style('opacity',0);
+    
+		
+	});
+	
+	svg.selectAll('.p10:not(.Average),.p90:not(.Average),.line:not(.Average)').on('mouseleave',function(){
+		svg.selectAll('.p10,.p90,.line,.label').transition().duration(50).style('opacity',1);
+		svg.selectAll('.label').style('display',function(){
+			return (this.__data__.Country == 'Average') ? 'block' : 'none';
+		});
+	});
+	
+}
+
+var na_svg = d3.select('#na_svg').append('svg')
+		.attr('width',width)
+		.attr('height',height);
+		
+var ee_svg = d3.select('#ee_svg').append('svg')
+		.attr('width',width)
+		.attr('height',height);
+		
+var we_svg = d3.select('#we_svg').append('svg')
+		.attr('width',width)
+		.attr('height',height);
+		
+var ne_svg = d3.select('#ne_svg').append('svg')
+		.attr('width',width)
+		.attr('height',height);
+		
+var se_svg = d3.select('#se_svg').append('svg')
+		.attr('width',width)
+		.attr('height',height);
+
+build_graph(we_data,we_svg,we_avg);
+build_graph(se_data,se_svg,se_avg);
+build_graph(ee_data,ee_svg,ee_avg);
+build_graph(ne_data,ne_svg,ne_avg);		
+build_graph(na_data,na_svg,na_avg);
+
+
+
+	
+});
+
+</script>
+
+
+</body>
+</html>
