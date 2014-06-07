@@ -91,7 +91,7 @@ table {
 		}
 		
 		circle {
-			fill:#d6d6d6;
+			fill:#efefef;
 		}
 		#median {
 			stroke-dasharray:4,4;
@@ -131,11 +131,23 @@ table {
 			font-weight: 700;
 			font-size: 14px;
 			position: absolute;
-			top:15px;
+			top:12px;
 			width:100%;
 			text-indent: 40px;
 			left: 0;
 			color:#ff5a0b;
+		}
+		.graph h2 {
+			text-align: center;
+			font-family: 'Lato',sans-serif;
+			font-weight: normal;
+			font-size: 10px;
+			position: absolute;
+			top:28px;
+			width:100%;
+			text-indent: 40px;
+			left: 0;
+			color:#aaa;
 		}
 		
 		.wrapper {
@@ -173,6 +185,12 @@ table {
 			opacity: 1;
 			display: block;
 		}
+		
+		.tickLine {display: none;}
+		
+		.tickLine.Average {display: block;}
+		
+		.tick text {fill: #aaa;}
 		
 		.info {
 			margin:10px 20px 20px;
@@ -214,10 +232,10 @@ table {
 <!-- <div id="all_svg" class="full-graph graph"><h1>All Countries</h1></div> -->
 
 <div class="breakouts">
-<div id="we_svg" class="graph"><h1>Western Europe</h1></div>
-<div id="ee_svg" class="graph"><h1>Eastern Europe</h1></div>
-<div id="ne_svg" class="graph"><h1>Northern Europe</h1></div>
-<div id="se_svg" class="graph"><h1>Southern Europe</h1></div>
+<div id="we_svg" class="graph"><h1>Western Europe</h1><h2>(U.N. Statistical Area)</h2></div>
+<div id="ee_svg" class="graph"><h1>Eastern Europe</h1><h2>(U.N. Statistical Area)</h2></div>
+<div id="ne_svg" class="graph"><h1>Northern Europe</h1><h2>(U.N. Statistical Area)</h2></div>
+<div id="se_svg" class="graph"><h1>Southern Europe</h1><h2>(U.N. Statistical Area)</h2></div>
 <div id="na_svg" class="graph"><h1>North America</h1></div>
 </div>
 </div>
@@ -719,7 +737,7 @@ var ee_annotations = [
 
 var ne_annotations = [
 	{
-		text: "Northern Europe shows a broad spread, however the Scandanavian countries have low levels of inequality while Estonia and the United Kingdom raise the average.",
+		text: "Northern Europe shows a broad spread. The Scandanavian countries have low levels of inequality while Estonia and the United Kingdom raise the average.",
 		width:110,
 		height:150,
 		xscale:.38,
@@ -739,12 +757,12 @@ var se_annotations = [
 
 var na_annotations = [
 	{
-		text: "Mexico has the most inequality, while the United States is number 4, making North America the region with the highest inequality.",
+		text: "Mexico has the most inequality, while the United States is ranked number 4, making North America the region with the highest inequality.",
 
 		width:250,
 		height:160,
 		xscale:.22,
-		yscale:300
+		yscale:310
 	}
 ];
 
@@ -817,6 +835,7 @@ var yScale = d3.scale.linear()
 		.attr('class',function(d){
 			return 'label ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
 		});
+		
     	
     var lines = svg.selectAll('line.line').data(data).enter()
 		.append('line')
@@ -863,6 +882,79 @@ var yScale = d3.scale.linear()
 			return 'p90 ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
 		});
 		
+	var p10labels = svg.selectAll('.p10label').data(data).enter()
+		.append('text')
+		.text(function(d){return d.P10;})
+		.attr('x',margin.left + 10)
+		.attr('y',function(d){
+			return yScale(d.P10) + 3;
+		})
+		.attr('class',function(d){
+			return 'label ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		}).style('text-anchor','start')
+		.style('font-size','8px');
+		
+	var p10ticks = svg.selectAll('.p10tick').data(data).enter()
+		.append('line')
+		.attr('x1',margin.left)
+		.attr('x2',margin.left + 8)
+		.attr('y1',function(d){
+			return yScale(d.P10);
+		})
+		.attr('y2',function(d){
+			return yScale(d.P10);
+		})
+		.attr('class',function(d){
+			return 'p10tick tickLine ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		}).style('text-anchor','start');
+		
+	var p90labels = svg.selectAll('.p90label').data(data).enter()
+		.append('text')
+		.text(function(d){return d.P90;})
+		.attr('x',margin.left + 10)
+		.attr('y',function(d){
+			return yScale(d.P90) + 3;
+		})
+		.attr('class',function(d){
+			return 'label ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		}).style('text-anchor','start')
+		.style('font-size','8px');
+		
+	var p90ticks = svg.selectAll('.p90tick').data(data).enter()
+		.append('line')
+		.attr('x1',margin.left)
+		.attr('x2',margin.left + 8)
+		.attr('y1',function(d){
+			return yScale(d.P90);
+		})
+		.attr('y2',function(d){
+			return yScale(d.P90);
+		})
+		.attr('class',function(d){
+			return 'p90tick tickLine ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		}).style('text-anchor','start');
+		
+	var ginilabels = svg.selectAll('.ginilabel').data(data).enter()
+		.append('text')
+		.text(function(d){return d.Gini;})
+		.attr('x',function(d){return xScale(d.Gini)})
+		.attr('y',height - margin.bottom - 10)
+		.attr('class',function(d){
+			return 'label ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		}).style('text-anchor','middle')
+		.style('font-size','8px');
+		
+	var giniticks = svg.selectAll('.ginitick').data(data).enter()
+		.append('line')
+		.attr('x1',function(d){return xScale(d.Gini)})
+		.attr('x2',function(d){return xScale(d.Gini)})
+		.attr('y1',height - margin.bottom)
+		.attr('y2',height - margin.bottom - 8)
+		.attr('class',function(d){
+			return 'ginitick tickLine ' + d.Country.replace(/ /g,'-') + ' ' + d.Region.replace(/ /g,'-');
+		}).style('text-anchor','start');
+
+
 	
 		
 	var xAxis_label = svg.append('text')
@@ -895,7 +987,8 @@ var avg_label = svg.append('text')
 		.html(function(d){return '<p>' + d.text + '</p>'})
     	.style('background','transparent')
     	.style('font-size','12px')
-    	.style('color','#444');
+    	.style('color','#444')
+    	.attr('class','annotation');
 		
 		
 		
@@ -908,9 +1001,11 @@ var avg_label = svg.append('text')
         	return (this.__data__.Country == country) ? 1.0 : 0;
 		});
 		
-		svg.selectAll('.label').style('display',function(){
+		svg.selectAll('.label,.tickLine').style('display',function(){
 			return (this.__data__.Country == country) ? 'block' : 'none';
 		});
+		
+		svg.selectAll('.annotation').style('display','none');
 		
 		//svg.select('.text-avg').transition().duration(50).style('opacity',0);
     
@@ -919,9 +1014,10 @@ var avg_label = svg.append('text')
 	
 	svg.selectAll('.p10:not(.Average),.p90:not(.Average),.line:not(.Average)').on('mouseleave',function(){
 		svg.selectAll('.p10,.p90,.line,.label').transition().duration(50).style('opacity',1);
-		svg.selectAll('.label').style('display',function(){
+		svg.selectAll('.label,.tickLine').style('display',function(){
 			return (this.__data__.Country == 'Average') ? 'block' : 'none';
 		});
+		svg.selectAll('.annotation').style('display','block');
 	});
 	
 }
